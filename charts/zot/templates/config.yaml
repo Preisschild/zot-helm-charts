@@ -1,13 +1,12 @@
-{{- if and .Values.mountConfig .Values.configFiles }}
+{{- if .Values.config }}
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: {{ .Release.Name }}-config
   namespace: {{ .Values.namespace | default .Release.Namespace }}
   labels:
     {{- include "zot.labels" . | nindent 4 }}
+type: Opaque
 data:
-{{- range $key, $val := .Values.configFiles }}
-  {{ $key }}: {{ $val | quote }}
-{{- end }}
+  config.json: {{ mustToJson .Values.config | b64enc }}
 {{- end }}
